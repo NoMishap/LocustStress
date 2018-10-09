@@ -1,5 +1,6 @@
-import sys, time
+import sys
 from src.locust_caller import call_locust_master
+from src.utils import check_argv
 
 options = {
         "file": {
@@ -51,26 +52,9 @@ def print_help():
     exit(0)
 
 
-def check_argv(argv):
-    if any("-h" == arg for arg in argv) or any("--help" == arg for arg in argv):
-        print_help()
-
-    if len(argv) > 1:
-        for arg in argv:
-            for key in options.keys():
-                arg_key = options[key]['arg']
-                if arg_key in arg:
-                    options[key]['value'] = arg.replace(arg_key, '')
-        return True
-    else:
-        print_help()
-
-
 def main(argv):
-    if check_argv(argv):
-        print(time.time())
+    if check_argv(argv, 1, options, print_help):
         call_locust_master(options)
-        print(time.time())
 
 
 if __name__ == "__main__":

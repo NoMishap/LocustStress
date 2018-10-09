@@ -5,6 +5,7 @@
 # Results files
 *_distribution.csv
 *_requests.csv
+*_process_time.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
