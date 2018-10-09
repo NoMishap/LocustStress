@@ -25,11 +25,11 @@ class WebsiteUser(HttpLocust):
 
 stats = {
     "start": {
-        "time": None,
+        "time": 0.0,
         "utc": None
     },
     "end": {
-        "time": None,
+        "time": 0.0,
         "utc": None
     },
     "diff": 0.0,
