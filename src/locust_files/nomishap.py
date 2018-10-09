@@ -82,7 +82,6 @@ def write_process_time_on_file(content):
     argv = sys.argv[1:]
     output_name = ""
     for arg in argv:
-        print(arg)
         if "--csv=" in arg:
             output_name += arg.replace("--csv=", "")
 
