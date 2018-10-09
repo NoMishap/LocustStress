@@ -14,7 +14,7 @@ class UserBehavior(TaskSet):
 
     @task(1)
     def index(self):
-        self.client.get("/localhost/pdftotext")
+        self.client.get("/pdfservice/pdfToText")
 
 
 class WebsiteUser(HttpLocust):
