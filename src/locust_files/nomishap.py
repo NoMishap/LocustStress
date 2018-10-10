@@ -101,7 +101,13 @@ def global_stats_to_string():
         content += "PROCESS TIME: execution " + str(index + 1) + "<br><br>"
         content += "Process started at: " + str(stats["start"]["utc"]) + " (utc date) <br>"
         content += "Process ended at: " + str(stats["end"]["utc"]) + " (utc date) <br><br>"
-        content += "Porcess execution time was: " + str(round(stats["diff"], 2)) + " seconds<br>"
+        if stats["end"]["utc"] is None and stats["start"]["utc"] is not None:
+            diff = time.time() - stats["start"]["time"]
+            content += "Process in execution from: " + str(round(diff, 2)) + " seconds<br>"
+        else:
+            diff = stats["diff"]
+            content += "Process execution time was: " + str(round(diff, 2)) + " seconds<br>"
+
         content += "------------------------------------------------------------------------<br><br>"
 
     return content
