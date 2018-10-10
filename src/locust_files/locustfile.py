@@ -23,25 +23,50 @@ class WebsiteUser(HttpLocust):
     max_wait = 100
 
 
-stats = {
-    "start": {
-        "time": 0.0,
-        "utc": None
-    },
-    "end": {
-        "time": 0.0,
-        "utc": None
-    },
-    "diff": 0.0,
-    "started": False
+global_stats = {
+    "current": 0,
+    "stats_list": list()
 }
 
 
+def init_stats():
+    stats = {
+        "start": {
+            "time": 0.0,
+            "utc": None
+        },
+        "end": {
+            "time": 0.0,
+            "utc": None
+        },
+        "diff": 0.0,
+        "started": False
+    }
+    global_stats["stats_list"].append(stats)
+
+
+init_stats()
+
+
 def starting():
+    stats = global_stats["stats_list"][global_stats["current"]]
     if stats["started"] is False:
         stats["started"] = True
         stats["start"]["time"] = time.time()
         stats["start"]["utc"] = datetime.utcnow()
+
+
+def stopping():
+    stats = global_stats["stats_list"][global_stats["current"]]
+    stats["end"]["time"] = time.time()
+    stats["end"]["utc"] = datetime.utcnow()
+    stats["diff"] = stats["end"]["time"] - stats["start"]["time"]
+
+    write_process_time_on_file(global_stats_to_string())
+
+    global_stats["current"] += 1
+
+    init_stats()
 
 
 def on_request_success(request_type, name, response_time, response_length):
@@ -59,16 +84,7 @@ def on_master_start_hatching():
 
 
 def on_stop_hatching():
-    stats["end"]["time"] = time.time()
-    stats["end"]["utc"] = datetime.utcnow()
-    stats["diff"] = stats["end"]["time"] - stats["start"]["time"]
-
-    content = "PROCESS TIME<br><br>"
-    content += "Process started at: " + str(stats["start"]["utc"]) + " (utc date) <br>"
-    content += "Process ended at: " + str(stats["end"]["utc"]) + " (utc date) <br><br>"
-    content += "Porcess execution time was: " + str(round(stats["diff"], 2)) + " seconds"
-
-    write_process_time_on_file(content)
+    stopping()
 
 
 # Hook up the event listeners
@@ -76,6 +92,19 @@ events.request_success += on_request_success
 events.master_start_hatching += on_master_start_hatching
 events.master_stop_hatching += on_stop_hatching
 events.locust_stop_hatching += on_stop_hatching
+
+
+def global_stats_to_string():
+    content = ""
+
+    for index, stats in enumerate(global_stats["stats_list"]):
+        content += "PROCESS TIME: execution " + str(index + 1) + "<br><br>"
+        content += "Process started at: " + str(stats["start"]["utc"]) + " (utc date) <br>"
+        content += "Process ended at: " + str(stats["end"]["utc"]) + " (utc date) <br><br>"
+        content += "Porcess execution time was: " + str(round(stats["diff"], 2)) + " seconds<br>"
+        content += "------------------------------------------------------------------------<br><br>"
+
+    return content
 
 
 def write_process_time_on_file(content):
@@ -97,9 +126,5 @@ def process_time():
     """
     Add a route to the Locust web app, where we can see the total content-length
     """
-    content = "PROCESS TIME<br><br>"
-    content += "Process started at: " + str(stats["start"]["utc"]) + " (utc date) <br>"
-    content += "Process ended at: " + str(stats["end"]["utc"]) + " (utc date) <br><br>"
-    content += "Porcess execution time was: " + str(round(stats["diff"], 2)) + " seconds"
 
-    return content
+    return global_stats_to_string()
