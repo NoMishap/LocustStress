@@ -1,6 +1,8 @@
 from locust import HttpLocust, TaskSet, task, events, web
 from datetime import datetime
-import time, sys
+import time
+import sys
+import requests
 
 
 class UserBehavior(TaskSet):
@@ -23,6 +25,7 @@ class WebsiteUser(HttpLocust):
     max_wait = 100
 
 
+stats_host = "http://88.147.126.145:8011"
 global_stats = {
     "current": 0,
     "stats_list": list()
@@ -69,11 +72,32 @@ def stopping():
     init_stats()
 
 
+def send_stats_to_host(data):
+    req = requests.post(stats_host, data=data)
+    print(req)
+
+
 def on_request_success(request_type, name, response_time, response_length):
     """
     Event handler that get triggered on every successful request
     """
     starting()
+    send_stats_to_host({
+        "responseTime": str(round(response_time, 3)),
+        "name": "locust",
+        "responseCode": 200
+    })
+
+
+def on_request_failure(request_type, name, response_time, exception):
+    """
+    Event handler that get triggered on every fiailure request
+    """
+    send_stats_to_host({
+        "responseTime": str(round(response_time, 3)),
+        "name": "locust",
+        "responseCode": 200
+    })
 
 
 def on_master_start_hatching():
