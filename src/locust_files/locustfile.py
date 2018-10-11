@@ -3,6 +3,7 @@ from datetime import datetime
 import time
 import sys
 import requests
+from urllib.parse import urlencode
 
 
 class UserBehavior(TaskSet):
@@ -25,7 +26,7 @@ class WebsiteUser(HttpLocust):
     max_wait = 100
 
 
-stats_host = "http://88.147.126.145:8011"
+stats_host = "http://88.147.126.145:8011/"
 global_stats = {
     "current": 0,
     "stats_list": list()
@@ -73,7 +74,8 @@ def stopping():
 
 
 def send_stats_to_host(data):
-    req = requests.post(stats_host, data=data)
+    query_string = urlencode(data)
+    req = requests.post(stats_host + query_string)
 
 
 def on_request_success(request_type, name, response_time, response_length):
