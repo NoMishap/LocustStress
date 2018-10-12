@@ -15,6 +15,15 @@ pip install locustio
 
 ```
 
+## Configuration
+
+This application need to set an `enviroment` variable  named `LOGGER`, this variable is used to set where send the logs of the requests.
+The `LOGGER` must have two of these values: 
+- `local` means that logs are written into a file in host machine
+- `http` means that logs are sent via http POST 
+
+These variable must be setted on all the hosts that you are using for testing.
+
 ## Run
 
 This application can be run in two different mode:
