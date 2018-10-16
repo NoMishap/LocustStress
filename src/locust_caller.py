@@ -46,6 +46,9 @@ def call_locust_master(options):
     if options['time']['value'] is not None:
         params.append('-t' + options['time']['value'])
 
+    if options['slaves']['value'] is not None:
+        params.append('--expect-slaves=' + options['slaves']['value'])
+
     call(params)
 
 

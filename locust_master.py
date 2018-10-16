@@ -30,6 +30,10 @@ options = {
         "output": {
             "arg": "-o=",
             "value": "test"
+        },
+        "slaves": {
+            "arg": "--slaves=",
+            "value": None
         }
     }
 
@@ -48,6 +52,7 @@ def print_help():
           "This param is optional default is 1m")
     print("-o=[output]: the prefix value of the csv output data ([output]_distribution.csv and [output]_requests.csv). "
           "This param is optional default is 'test'")
+    print("--slaves=[num]: num is the number of slaves that the master have to wait before to run in case of --no-web")
     print("-h or --help: to view this message", end="\n\n")
     exit(0)
 
